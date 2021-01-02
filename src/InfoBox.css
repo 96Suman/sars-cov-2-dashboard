@@ -1,0 +1,10 @@
+.infoBox__title {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+
+.infoBox__cases {
+  color: red;
+}
