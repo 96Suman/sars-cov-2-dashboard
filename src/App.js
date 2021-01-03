@@ -38,7 +38,7 @@ function App() {
     getCountriesData();
   }, []);
 
-  // To load the initial world wide data
+  // To load the initial world wide datas
   useEffect(() => {
     fetch("https://disease.sh/v3/covid-19/all")
       .then((response) => response.json())
