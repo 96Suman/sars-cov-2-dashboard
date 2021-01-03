@@ -12,6 +12,8 @@ import {
   Card,
   CardContent,
 } from "@material-ui/core";
+import "leaflet/dist/leaflet.css";
+import numeral from "numeral";
 
 function App() {
   // same as countries = new ArrayList();, setCountries(){};
@@ -19,6 +21,13 @@ function App() {
   const [country, setInputCountry] = useState("worldwide");
   const [countryInfo, setCountryInfo] = useState([]);
   const [tableData, setTableData] = useState([]);
+  const [coordinate, setCoordinates] = useState({
+    lat: 34.80746,
+    lng: -40.4796,
+  });
+  const [mapZoom, setMapZoom] = useState(3);
+
+  const [worldWideInfo, setWorldWideInfo] = useState([]);
   // Runs the code base on the conditions. Code only runs once when the component loads and not again
   useEffect(() => {
     const getCountriesData = async () => {
@@ -29,16 +38,16 @@ function App() {
             name: country.country,
             value: country.countryInfo.iso2,
           }));
-          const sortedData = sortData(data);
           setCountries(countries);
-          console.log(data);
-          setTableData(sortData);
+          setTableData(sortData(data));
+          console.log(worldWideInfo);
+          setWorldWideInfo(data);
         });
     };
     getCountriesData();
   }, []);
 
-  // To load the initial world wide datas
+  // To load the initial world wide data
   useEffect(() => {
     fetch("https://disease.sh/v3/covid-19/all")
       .then((response) => response.json())
@@ -58,6 +67,8 @@ function App() {
       .then((data) => {
         setInputCountry(countryName);
         setCountryInfo(data);
+        setCoordinates([data.countryInfo.lat, data.countryInfo.long]);
+        setMapZoom(6);
       });
   };
 
@@ -82,21 +93,21 @@ function App() {
         <div className="app__stats">
           <InfoBox
             title="COVID-19 Cases"
-            cases={countryInfo.todayCases}
-            total={countryInfo.cases}
+            cases={numeral(countryInfo.todayCases).format("0,0.[00]")}
+            total={numeral(countryInfo.cases).format("0,0.[00]")}
           />
           <InfoBox
             title="COVID-19 Deaths"
-            cases={countryInfo.todayDeaths}
-            total={countryInfo.deaths}
+            cases={numeral(countryInfo.todayDeaths).format("0,0.[00]")}
+            total={numeral(countryInfo.deaths).format("0,0.[00]")}
           />
           <InfoBox
             title="Recovered"
-            cases={countryInfo.todayRecovered}
-            total={countryInfo.recovered}
+            cases={numeral(countryInfo.todayRecovered).format("0,0.[00]")}
+            total={numeral(countryInfo.recovered).format("0,0.[00]")}
           />
         </div>
-        <Map />
+        <Map worldwideInfo={worldWideInfo} center={coordinate} zoom={mapZoom} />
       </div>
       <Card className="app__right">
         <CardContent>
